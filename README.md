@@ -59,9 +59,13 @@ Repo: https://github.com/george-wiles/anz-tokenizer
 Visibility: public
 Default branch: main
 
+# Pre-requisites
+
+node v18.13.0
+
 
 # Usage
-
+- clone repo or dowload from github as zip and unarchive, and install
 ```
 git clone git@github.com:george-wiles/anz-tokenizer.git
 cd anz-tokenizer
