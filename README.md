@@ -102,50 +102,28 @@ Server listening on 3000
 ```
 curl -X POST \
   -H "Content-Type: application/json" \
-  -d '{
-    "accountNumbers": [
+  -d '[
       "1111-1111-1111-1111",
       "2222-2222-2222-2222",
       "3333-3333-3333-3333"
-    ]
-  }' \
+    ]' \
   http://localhost:3000/tokenize
 
 ```
 
-then pipe the response tokens into the detokenize request.  NOTE: can pipe through jq to prettify response in console for ease.
+Then pipe the response tokens into the detokenize request. 
 
 ```
 curl -X POST \
   -H "Content-Type: application/json" \
-  -d '{
-    "tokens": [
+  -d '[
       "2e37d5c2-b591-4594-85d2-75924d41cc2d",
       "33a5e3f4-e879-41df-872b-782bd313b710",
       "ba87c532-47a7-42fa-a915-373a1821485a"
-    ]
-  }' \
+    ]' \
   http://localhost:3000/detokenize
 
 ```
 
-roundtrip result should return payload with original account numbers.  
-
-```
-{
-    "accountNumbers": [
-        {
-            "originalAccountNumber": "1111-1111-1111-1111"
-        },
-        {
-            "originalAccountNumber": "2222-2222-2222-2222"
-        },
-        {
-            "originalAccountNumber": "3333-3333-3333-3333"
-        }
-    ]
-}
-```
-
-Note: if there is no account number for token in collection store, will return {"error":"Token not found"}, but validation and error handling is outside of scope for this 2 hour exercise.
+Note: if there is no account number for token in collection store, will return "null", but validation and error handling is outside of scope for this 2 hour exercise.
 
