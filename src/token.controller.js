@@ -1,24 +1,29 @@
-const tokenService = require('./token.service');
+const TokenService = require('./token.service');
 
 class TokenController {
-  static async tokenize(req, reply) {
+
+  constructor() {
+    this.tokenService = new TokenService();
+  }
+
+  async tokenize(request, reply) {
     try {
-      const accountNumbers = req.body.accountNumbers;
-      const tokens = await tokenService.tokenize(accountNumbers);
-      const jsonResponse = JSON.stringify({ tokens });
-      return reply.code(200).send(jsonResponse);
+      const accountNumbers = request.body;
+      const tokens = await this.tokenService.tokenize(accountNumbers);
+      const tokenValues = tokens.map(token => token.token);
+      return reply.code(200).send(JSON.stringify(tokenValues));
     } catch (error) {
       console.error(error);
       return reply.code(500).send({ error: 'Internal Server Error' });
     }
   }
 
-  static async detokenize(req, reply) {
+  async detokenize(request, reply) {
     try {
-      const tokens = req.body.tokens;
-      const accountNumbers = await tokenService.detokenize(tokens);
-      const jsonResponse = JSON.stringify({ accountNumbers });
-      return reply.code(200).send(jsonResponse);
+      const tokens = request.body;
+      const accounts = await this.tokenService.detokenize(tokens);
+      const accountValues = accounts.map(account => account.accountNumber);
+      return reply.code(200).send(JSON.stringify(accountValues));
     } catch (error) {
       console.error(error);
       return reply.code(500).send({ error: 'Internal Server Error' });

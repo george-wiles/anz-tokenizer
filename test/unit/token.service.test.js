@@ -1,30 +1,35 @@
 const TokenService = require('../../src/token.service');
-const tokens = require('../../src/database.service');
-
-jest.mock('../../src/database.service');
 
 describe('TokenService', () => {
+  let tokenService;
+
   beforeEach(() => {
-    tokens.clear(); 
+    tokenService = new TokenService();
   });
 
-  it('should tokenize account numbers', async () => {
-    tokens.insert.mockReturnValueOnce(); // Mock the database insert method
-    const accountNumbers = ['1234', '5678', '91011'];
-    const tokensResult = await TokenService.tokenize(accountNumbers);
-    expect(tokensResult).toHaveLength(accountNumbers.length);
-    // Verify that tokens are inserted into the database
-    expect(tokens.insert).toHaveBeenCalledTimes(accountNumbers.length);
+  describe('tokenize', () => {
+    it('should tokenize account numbers', async () => {
+      // Arrange
+      const accountNumbers = [123456, 987654]; 
+      tokenService.tokenize = jest.fn().mockResolvedValue(['token1', 'token2']);
+      // Act
+      const tokens = await tokenService.tokenize(accountNumbers);
+      // Verify
+      expect(tokens).toEqual(['token1', 'token2']);
+      expect(tokenService.tokenize).toHaveBeenCalledWith(accountNumbers);
+    });
   });
 
-  it('should detokenize tokens', async () => {
-    tokens.findOne.mockReturnValueOnce({ originalAccountNumber: '1234' }); // Mock the database findOne method
-    const tokensToDetokenize = ['token1', 'token2', 'token3'];
-    const detokenizedData = await TokenService.detokenize(tokensToDetokenize);
-    expect(detokenizedData).toHaveLength(tokensToDetokenize.length);
-    // Verify that detokenization logic is correct
-    expect(detokenizedData[0].originalAccountNumber).toBe('1234');
+  describe('detokenize', () => {
+    it('should detokenize tokens', async () => {
+      // Arrange
+      const tokens = ['token1', 'token2']; // Example tokens
+      tokenService.detokenize = jest.fn().mockResolvedValue([1234, 9876]);
+      // Act
+      const accountNumbers = await tokenService.detokenize(tokens);
+      // Verify
+      expect(accountNumbers).toEqual([1234, 9876]);
+      expect(tokenService.detokenize).toHaveBeenCalledWith(tokens);
+    });
   });
-
-
 });

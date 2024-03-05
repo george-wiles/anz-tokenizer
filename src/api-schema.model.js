@@ -1,13 +1,7 @@
 const tokenizeRequestSchema = {
   body: {
-    type: 'object',
-    properties: {
-      accountNumbers: {
-        type: 'array',
-        items: { type: 'string' }
-      }
-    },
-    required: ['accountNumbers']
+    type: 'array',
+    items: { type: 'string' }
   },
   response: {
     200: {
@@ -28,16 +22,10 @@ const tokenizeRequestSchema = {
   }
 };
 
-const detokenizeRequestSchema = {
+const detokenizeRequestSchema =  {
   body: {
-    type: 'object',
-    properties: {
-      tokens: {
-        type: 'array',
-        items: { type: 'string' }
-      }
-    },
-    required: ['tokens']
+    type: 'array',
+    items: { type: 'string' }
   },
   response: {
     200: {

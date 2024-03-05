@@ -1,26 +1,37 @@
 const { v4: uuidv4 } = require('uuid');
-const tokenDB = require('./database.service');
+const TokenDatabase = require('./database.service');
 
 class TokenService {
 
-  static async tokenize(accountNumbers) {
-    const tokenizedData = accountNumbers.map(accountNumber => {
-      const token = uuidv4();
-      tokenDB.insert({ token, originalAccountNumber: accountNumber });
-      return { token };
-    });
+  constructor() {
+    this.tokenDB = new TokenDatabase();
+  }
+
+  async tokenize(accountNumbers) {
+    const tokenizedData = await Promise.all(accountNumbers.map(async (accountNumber) => {
+      let token = await this.tokenDB.findTokenByAccountNumber(accountNumber);
+      if (!token) {
+        token = uuidv4();
+        const tokenData = {
+          token: token,
+          accountNumber: accountNumber
+        };
+        await this.tokenDB.insertToken(tokenData)
+      }
+      return {token};
+    }));
     return tokenizedData;
   }
 
-  static async detokenize(tokensToDetokenize) {
-    const detokenizedData = tokensToDetokenize.map(token => {
-      const tokenData = tokenDB.findOne({ token });
-      if (tokenData) {
-        return { originalAccountNumber: tokenData.originalAccountNumber };
+  async detokenize(tokensToDetokenize) {
+    const detokenizedData = await Promise.all(tokensToDetokenize.map(async token => {
+      const accountNumber = await this.tokenDB.findAccountNumberByToken(token);
+      if (accountNumber) {
+        return { accountNumber };
       } else {
         return { error: 'Token not found' };
       }
-    });
+    }));
     return detokenizedData;
   }
 

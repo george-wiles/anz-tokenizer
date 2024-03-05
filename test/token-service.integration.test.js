@@ -1,9 +1,10 @@
-const tokenService = require('../src/token.service');
-const tokens = require('../src/database.service'); 
+const TokenService = require('../src/token.service');
 
 describe('Tokenization Integration Test', () => {
+  let tokenService;
+
   beforeEach(() => {
-    tokens.clear();
+    tokenService = new TokenService();
   });
 
   it('should roundtrip tokenization and detokenization', async () => {
@@ -20,7 +21,7 @@ describe('Tokenization Integration Test', () => {
     const detokenizedData = await tokenService.detokenize(tokensArray);
 
     // Extract detokenized account numbers
-    const detokenizedAccountNumbers = detokenizedData.map(detokenizedItem => detokenizedItem.originalAccountNumber);
+    const detokenizedAccountNumbers = detokenizedData.map( item => item.accountNumber);
 
     // Assert that detokenized account numbers match original account numbers
     expect(detokenizedAccountNumbers).toEqual(originalAccountNumbers);
